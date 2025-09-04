@@ -9,13 +9,57 @@
 
 */
 
+function getDigit(number, place, longestNumber) {
+  const string = number.toString();
+  const size = string.length;
+
+  const mod = longestNumber - size
+
+  return string[place - mod] || 0
+}
+
+function getLongestNumber(array) {
+  let longest = 0;
+
+  for (let i = 0; i < array.length; i++) {
+    const currentLength = array[i].toString().length;
+    longest = currentLength > longest ? currentLength : longest;
+  }
+
+  return longest
+}
+
 function radixSort(array) {
-  // code goes here
+  // find longest number
+  const longestNumber = getLongestNumber(array);
+  // create how many buckets you need
+  // an array of 10 empty arrays
+  const buckets = new Array(10).fill().map(() => []);
+
+  // for loop for how many iterations you need to do
+  for (let i = longestNumber - 1; i >= 0; i--) {
+    // while loop
+    // enqueue the numbers into their buckets
+    while (array.length) {
+      const current = array.shift();
+      buckets[getDigit(current, i, longestNumber)].push(current);
+    }
+
+    // for loop for each bucket
+    // dequeue all of the items out of the bucket
+    for (let j = 0; j < 10; j++) {
+      while (buckets[j].length) {
+        array.push(buckets[j].shift());
+      }
+    }
+  }
+
+  return array;
 }
 
 // unit tests
 // do not modify the below code
-describe.skip("radix sort", function () {
+describe("radix sort", function () {
   it("should sort correctly", () => {
     const nums = [
       20,

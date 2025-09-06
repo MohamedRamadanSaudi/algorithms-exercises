@@ -18,12 +18,53 @@
 */
 
 class ArrayList {
-  // code goes here
+  constructor() {
+    this.length = 0;
+    this.data = {};
+  }
+
+  push(value) {
+    // add an item to the end of the array
+    this.data[this.length] = value;
+    this.length++;
+  }
+
+  pop() {
+    // remove the last item in the array and returns it
+    const ans = this.data[this.length - 1];
+    delete this.data[this.length - 1];
+    this.length--;
+    return ans;
+  }
+
+  get(index) {
+    // return that item from the array
+    return this.data[index]
+  }
+
+  delete(index) {
+    // removes item from the array and collapses the array
+    const ans = this.data[index];
+    this.#collapseTo(index);
+    return ans;
+  }
+
+  #collapseTo(index) {
+    for (let i = index; i < this.length; i++) {
+      this.data[i] = this.data[i + 1];
+    }
+    delete this.data[this.length - 1];
+    this.length--;
+  }
+
+  serialize() {
+    return this.data;
+  }
 }
 
 // unit tests
 // do not modify the below code
-describe.skip("ArrayList", function () {
+describe("ArrayList", function () {
   const range = (length) =>
     Array.apply(null, { length: length }).map(Number.call, Number);
   const abcRange = (length) =>

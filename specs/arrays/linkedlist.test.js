@@ -73,7 +73,7 @@ class LinkedList {
     const excise = node.next;
     if (!excise) return null;
     node.next = excise.next;
-    if (!node.next) this.tail = node.next;
+    if (!node.next) this.tail = node;
     this.length--;
     return excise.value;
   }

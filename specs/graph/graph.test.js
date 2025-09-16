@@ -14,7 +14,7 @@
   getUser  - function - a function that returns a user's object given an ID
 
   example
-
+  getUser(308) returns:
   {
     id: 308,
     name: "Beatrisa Lalor",
@@ -26,13 +26,34 @@
 const { getUser } = require("./jobs");
 
 const findMostCommonTitle = (myId, degreesOfSeparation) => {
-  // code goes here
+  const queue = [{ id: myId, degree: 0 }];
+  const visited = new Set();
+  const titleCount = {};
+  let mostCommonTitle = "";
+  let maxCount = 0;
+  while (queue.length > 0) {
+    const { id, degree } = queue.shift();
+    if (visited.has(id) || degree > degreesOfSeparation) continue;
+    visited.add(id);
+    const user = getUser(id);
+    const title = user.title;
+    titleCount[title] = (titleCount[title] || 0) + 1;
+    if (titleCount[title] > maxCount) {
+      maxCount = titleCount[title];
+      mostCommonTitle = title;
+    }
+    for (const connection of user.connections) {
+      if (!visited.has(connection)) {
+        queue.push({ id: connection, degree: degree + 1 });
+      }
+    }
+  }
+  return mostCommonTitle;
 };
 
 // unit tests
 // do not modify the below code
-test.skip("findMostCommonTitle", function () {
-  // the getUser function and data comes from this CodePen: https://codepen.io/btholt/pen/NXJGwa?editors=0010
+describe("findMostCommonTitle", function () {
   test("user 30 with 2 degrees of separation", () => {
     expect(findMostCommonTitle(30, 2)).toBe("Librarian");
   });
@@ -48,7 +69,7 @@ test.skip("findMostCommonTitle", function () {
   });
 });
 
-test.skip("extra credit", function () {
+describe("extra credit", function () {
   test("user 1 with 7 degrees of separation – this will traverse every user that's followed by someone else. five users are unfollowed", () => {
     expect(findMostCommonTitle(1, 7)).toBe("Geological Engineer");
   });

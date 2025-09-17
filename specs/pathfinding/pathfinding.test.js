@@ -16,8 +16,50 @@
 // the way I did. however feel free to use it if you'd like
 const logMaze = require("./logger");
 
+function generateVisited(maze) {
+  const visited = [];
+  for (let y = 0; y < maze.length; y++) {
+    visited[y] = [];
+  }
+  return visited;
+}
+
 function findShortestPathLength(maze, [xA, yA], [xB, yB]) {
-  // code goes here
+  const visited = generateVisited(maze);
+  const queue = [[xA, yA, 0]];
+  const directions = [
+    [0, 1],
+    [1, 0],
+    [0, -1],
+    [-1, 0]
+  ];
+
+  while (queue.length > 0) {
+    const [x, y, dist] = queue.shift();
+
+    if (x === xB && y === yB) {
+      return dist;
+    }
+
+    for (const [dx, dy] of directions) {
+      const newX = x + dx;
+      const newY = y + dy;
+
+      if (
+        newX >= 0 &&
+        newX < maze[0].length &&
+        newY >= 0 &&
+        newY < maze.length &&
+        maze[newY][newX] !== 1 &&
+        !visited[newY][newX]
+      ) {
+        visited[newY][newX] = true;
+        queue.push([newX, newY, dist + 1]);
+      }
+    }
+  }
+
+  return -1;
 }
 
 // there is a visualization tool in the completed exercise
@@ -26,7 +68,7 @@ function findShortestPathLength(maze, [xA, yA], [xB, yB]) {
 
 // unit tests
 // do not modify the below code
-describe.skip("pathfinding – happy path", function () {
+describe("pathfinding – happy path", function () {
   const fourByFour = [
     [2, 0, 0, 0],
     [0, 0, 0, 0],
@@ -90,7 +132,7 @@ describe.skip("pathfinding – happy path", function () {
 // I care far less if you solve these
 // nonetheless, if you're having fun, solve some of the edge cases too!
 // just remove the .skip from describe.skip
-describe.skip("pathfinding – edge cases", function () {
+describe("pathfinding – edge cases", function () {
   const byEachOther = [
     [0, 0, 0, 0, 0],
     [0, 2, 2, 0, 0],
